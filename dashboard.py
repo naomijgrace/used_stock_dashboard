@@ -36,7 +36,7 @@ def create_rego_buttons(details):
             if detail == 'Rego expired':
                 buttons.append(f'<button disabled style="background-color:lightcoral; border:none; border-radius:10px; padding:2px 8px;">{detail}</button>')
             elif detail == 'Rego expires soon':
-                buttons.append(f'<button disabled style="background-color:orange; border:none; border-radius:10px; padding:2px 8px;">{detail}</button>')
+                buttons.append(f'<button disabled style="background-color:lightyellow; border:none; border-radius:10px; padding:2px 8px;">{detail}</button>')
             else:
                 buttons.append(f'<button disabled style="background-color:lightgray; border:none; border-radius:10px; padding:2px 8px;">{detail}</button>')
         return ' '.join(buttons)
@@ -48,33 +48,32 @@ df_all['Rego Details'] = [create_rego_buttons(row['Rego Details']) for idx, row 
 # Set the title for the app
 st.title("Motorcycle Stock Dashboard")
 
+# Add the 'Last Updated' subheading below the main title
+st.subheader(f"Last Updated: {DATE.strftime('%d-%m-%Y')}")
+
 # Sidebar filters for columns
 with st.sidebar:
     st.header("Filter Options")
     
-    # Filter by 'Make' (Options are 'ALL', 'BMW', 'KAW', 'KTM')
-    make_filter = st.selectbox('Select Make:', options=['ALL', 'BMW', 'KAW', 'KTM'])
-    
-    # Filter by 'Stock Type'
-    stock_type_filter = st.multiselect('Select Stock Type:', options=df_all['Stock Type'].unique(), default=df_all['Stock Type'].unique())
+    # Replace dropdown with radio buttons for 'Make'
+    make_filter = st.radio('Select Make:', options=['ALL', 'BMW', 'KAW', 'KTM'], horizontal=True)
     
     # LAMS Approved Toggle
     lams_filter = st.checkbox('Show LAMS Approved Only')
 
-# Apply the filters
-df_filtered = df_all[df_all['Stock Type'].isin(stock_type_filter)]
+# Apply Make filter based on the selection
+if make_filter == 'BMW':
+    df_filtered = df_all[df_all['Make'].str.contains('BMW', case=False, na=False)]
+elif make_filter == 'KAW':
+    df_filtered = df_all[df_all['Make'].str.contains('KAW', case=False, na=False)]
+elif make_filter == 'KTM':
+    df_filtered = df_all[df_all['Make'].str.contains('KTM', case=False, na=False)]
+else:
+    df_filtered = df_all
 
 # Filter for LAMS Approved if the toggle is selected
 if lams_filter:
     df_filtered = df_filtered[df_filtered['LAMS?'] == '✔']
-
-# Apply Make filter based on the dropdown
-if make_filter == 'BMW':
-    df_filtered = df_filtered[df_filtered['Make'].str.contains('BMW', case=False, na=False)]
-elif make_filter == 'KAW':
-    df_filtered = df_filtered[df_filtered['Make'].str.contains('KAW', case=False, na=False)]
-elif make_filter == 'KTM':
-    df_filtered = df_filtered[df_filtered['Make'].str.contains('KTM', case=False, na=False)]
 
 # Convert the DataFrame to HTML for rendering buttons in the 'Rego Details' column, hiding the index, and centering LAMS values
 html_table = df_filtered.to_html(escape=False, index=False)
@@ -96,6 +95,7 @@ custom_css = """
 
 # Render the table with custom CSS, without the table title
 st.write(custom_css + html_table, unsafe_allow_html=True)
+
 
 
 

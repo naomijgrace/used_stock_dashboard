@@ -46,7 +46,7 @@ def create_rego_buttons(details):
 df_all['Rego Details'] = [create_rego_buttons(row['Rego Details']) for idx, row in df_all.iterrows()]
 
 # Set the title for the app
-st.title("Motorcycle Stock Dashboard")
+st.title("Used Stock Dashboard")
 
 # Add the 'Last Updated' subheading below the main title
 st.subheader(f"Last Updated: {DATE.strftime('%d-%m-%Y')}")

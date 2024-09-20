@@ -291,7 +291,7 @@ def main():
 
     # Title and Subtitle
     st.title("🏍️ Used Stock Dashboard")
-    st.markdown("### Monitor and Analyze Your Used Stock Inventory")
+    st.markdown("### To keep track of listing and rego of inventory")
 
     # Define the available "Make" options
     tab_options = ["ALL", "BMW", "KAW", "KTM", "OTHER"]
